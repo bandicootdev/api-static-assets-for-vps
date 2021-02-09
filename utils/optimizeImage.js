@@ -9,7 +9,7 @@ const PATH = path.join(__dirname, `../${process.env.PATHIMAGES}`)
 const TINIFY_KEY = process.env.TINIFY_KEY
 tinify.key = TINIFY_KEY;
 
-module.exports = async () => {
+module.exports = () => {
   return new Promise((resolve, reject) => {
     if (typeof TINIFY_KEY === "undefined") {
       reject(new Error('there is no tinify Api Key'))
