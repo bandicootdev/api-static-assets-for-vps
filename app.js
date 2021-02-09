@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/connectDB');
+const models=require('./models/index')
 const routes = require('./routes/index');
 const captureError = require('./utils/serverError')
 const app = express();
