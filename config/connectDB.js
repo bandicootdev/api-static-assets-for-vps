@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-module.exports = (url, name, port) => {
+module.exports = (url, port,name) => {
   mongoose.Promise = global.Promise;
   return new Promise((resolve, reject) => {
     mongoose.connect(`mongodb://${url}:${port}/${name}`, {
