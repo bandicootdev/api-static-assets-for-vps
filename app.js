@@ -1,10 +1,12 @@
 require('dotenv').config();
 const express = require('express');
+const cron = require('node-cron');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/connectDB');
-const models=require('./models/index')
+const models = require('./models/index')
 const routes = require('./routes/index');
-const captureError = require('./utils/serverError')
+const captureError = require('./utils/serverError');
+const {deleteJunkFiles} = require("./controllers/maintenance");
 const app = express();
 
 connectDB(
@@ -19,6 +21,16 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use('/', routes)
 
 app.use(captureError);
+
+cron.schedule('* * 23 * *', () => {
+  try {
+    deleteJunkFiles();
+  } catch (err) {
+    console.log(err)
+  }
+}, {
+  timezone: "America/La_Paz"
+});
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`server on port ${process.env.PORT || 5000}`)

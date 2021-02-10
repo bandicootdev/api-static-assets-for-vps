@@ -26,7 +26,7 @@ module.exports.optimizeImages = async (req, res, next) => {
   }
 }
 
-module.exports.deleteJunkFiles = async (req, res, next) => {
+module.exports.deleteJunkFiles = async (req, res,next) => {
   try {
     const uploadedImages = await scanDir();
     const images = await Image.find({}).catch(err => {
@@ -37,12 +37,16 @@ module.exports.deleteJunkFiles = async (req, res, next) => {
     }, []);
     uploadedImages.map(async (img) => {
       if (typeof nameImages.find(el => el === img) === "undefined") {
-        if (fileExists(img)) {
-          removeImage(img)
+        if (await fileExists(img)) {
+          await removeImage(img)
         }
       }
     })
-    res.status(200).json({ok: true, message: 'cleaned folder'})
+    if (req){
+    return res.status(200).json({ok: true, message: 'cleaned folder'})
+    }else{
+     console.log('cleaned folder')
+    }
   } catch (err) {
     next(err)
   }
