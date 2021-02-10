@@ -36,19 +36,26 @@ module.exports.uploadImages = (req, res, next) => {
 }
 
 
-module.exports.fileExists = async (image) => {
+module.exports.fileExists = (image) => {
   const pathFile = path.join(__dirname, `../public/images/${image}`);
-  await fsPromise.access(pathFile, fs.constants.F_OK).catch(err => {
+  fsPromise.access(pathFile, fs.constants.F_OK).catch(err => {
     throw err
   })
   return true
 };
 
 
-module.exports.removeImage = async (image) => {
-  const pathFile = path.join(__dirname, `../uploads/${image}`);
-  await fsPromise.unlink(pathFile).catch(err => {
+module.exports.removeImage = (image) => {
+  const pathFile = path.join(__dirname, `../public/images/${image}`);
+  fsPromise.unlink(pathFile).catch(err => {
     throw err
   })
   return true;
 };
+
+module.exports.scanDir = () => {
+  const pathFile = path.join(__dirname, `../public/images/`);
+  return fsPromise.readdir(pathFile).catch(err => {
+    throw err
+  })
+}

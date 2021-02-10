@@ -16,7 +16,7 @@ module.exports.uploadImagesController = async (req, res, next) => {
         return res.status(406).json({ok: false, message: 'invalid type'})
       }
       let images = req.files.reduce((acc, img) => {
-        return acc + img.filename;
+        return acc.concat(img.filename);
       }, [])
       const fileImage = new Image({
         project,
