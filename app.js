@@ -2,8 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cron = require('node-cron');
 const bodyParser = require('body-parser');
+const forceSsl = require('express-force-ssl');
 const connectDB = require('./config/connectDB');
-const models = require('./models/index')
+const models = require('./models/index');
 const routes = require('./routes/index');
 const captureError = require('./utils/serverError');
 const {deleteJunkFiles} = require("./controllers/maintenance");
@@ -14,7 +15,7 @@ connectDB(
   process.env.PORTDB,
   process.env.NAMEDB
 )
-console.log(`${__dirname}/public`)
+app.use(forceSsl)
 app.use(express.static(`${__dirname}/public`))
 app.use(express.static(`${__dirname}/public/images`))
 app.use(bodyParser.json())
