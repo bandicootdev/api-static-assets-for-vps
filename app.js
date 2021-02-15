@@ -1,4 +1,6 @@
 require('dotenv').config();
+const fs = require('fs');
+const https = require('https');
 const express = require('express');
 const cron = require('node-cron');
 const bodyParser = require('body-parser');
@@ -15,6 +17,11 @@ connectDB(
   process.env.PORTDB,
   process.env.NAMEDB
 )
+const certificate = {
+  key: fs.readFileSync(process.env.NODE_ENV === 'prod' ? process.env.SSL_KEY_ROUTE : './certificates/old/private.key'),
+  cert: fs.readFileSync(process.env.NODE_ENV === 'prod' ? process.env.SSL_CRT_ROUTE : './certificates/old/certificate.crt'),
+  // ca: fs.readFileSync('./certificates/old/ca_bundle.crt')
+};
 app.use(forceSsl)
 app.use(express.static(`${__dirname}/public`))
 app.use(express.static(`${__dirname}/public/images`))
@@ -35,6 +42,13 @@ cron.schedule('* * 23 * *', () => {
   timezone: "America/La_Paz"
 });
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log(`server on port ${process.env.PORT || 5000}`)
-})
+
+if (process.env.NODE_ENV !== "prod") {
+  app.listen(process.env.PORT || 5000, () => {
+    console.log(`server on port ${process.env.PORT || 5000}`)
+  })
+} else {
+  https.createServer(certificate, app).listen(process.env.PORT || 5000, () => {
+    console.log(`server on port ${process.env.PORT || 5000}`)
+  })
+}
