@@ -9,13 +9,17 @@ module.exports.getListImages = async (req, res, next) => {
     })
     images = images.reduce((acc, item) => {
       let names = [];
-      item.images.forEach(item => {
-        names.push(`${fullUrl}/${item}`)
+      item.images.forEach(itemImage => {
+        names.push({
+          project:item.project,
+          url:`${fullUrl}/${itemImage}`,
+          type:item.type
+        })
       })
       return acc.concat(names)
     }, [])
 
-    return res.status(200).json({ok:true,images})
+    return res.status(200).json({ok:true,assets:images})
   } catch (err) {
     console.log(err)
     next(err)
@@ -29,9 +33,12 @@ module.exports.uploadImagesController = async (req, res, next) => {
       if (!project || !type) {
         return res.status(400).json({ok: false, message: 'required fields'});
       }
-      if (typeof TYPES.find(el => el.toLowerCase() === type) === "undefined") {
-        return res.status(406).json({ok: false, message: 'invalid type'})
+
+      if (TYPES.find(el => el.toLowerCase() === type) === undefined) {
+        console.log('entro en el invalid')
+        return res.status(406).json({ok: false, message: 'invalid type for project'})
       }
+
       let images = req.files.reduce((acc, img) => {
         return acc.concat(img.filename);
       }, [])
